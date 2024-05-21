@@ -1,5 +1,6 @@
 // General Include Statements
 #include <iostream>
+#include <map>
 #include <string>
 #include <thread>
 #include <vector>
@@ -21,6 +22,8 @@ using namespace std;
 
 // Global Constants
 int status = true;
+int hNum = 0;
+map<int, vector<string>> history; // The int passed in here should be an hNum
 
 // Function Prototypes
 void shell_loop();
@@ -58,7 +61,6 @@ int main(int argc, char **argv) {
  * Additionally, it will execute the commands when prompted
  */
 void shell_loop() {
-    std::vector<string> history;
     vector<char> line;
     vector<string> args;
 
@@ -138,6 +140,13 @@ int execute(vector<string> args) {
     // Wait for the process to finish
     p_thread.join();
 
+    // Add the command to the history
+    history[hNum] = args;
+
+    // Increment the history number
+    hNum++;
+
+    // Return
     return status;
 }
 
@@ -157,6 +166,8 @@ int execute_command(vector<string> args){
         return lemshell_exit(args, status);
     } else if (args[0] == "help") {
         return lemshell_help(args);
+    } else if (args[0] == "history") {
+        return lemshell_history(args, history, hNum);
     }
 
     // Otherwise, we can execute this as a system command by converting the vector back to a string

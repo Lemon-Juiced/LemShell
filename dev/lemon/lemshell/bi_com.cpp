@@ -1,6 +1,7 @@
 //Implementation File for the Built-in Commands
 #include "bi_com.h"
 #include <iostream>
+#include <map>
 #include <string>
 #include <thread>
 #include <vector>
@@ -82,6 +83,36 @@ int lemshell_help(vector<string> args){
     cout << apply_style("clear", "blue") << " - Clear the screen" << endl;
     cout << apply_style("exit", "blue") << " - Exit the shell" << endl;
     cout << apply_style("help", "blue") << " - Display this help menu" << endl;
+    return 1;
+}
+
+/**
+ * Built-in command to display the history of commands
+ * Since all keys are integers, the history is ordered by the order of execution
+ * We can just decrement the history number until we get to 0
+ * 
+ * @param args The arguments to execute
+ * @param history The history of commands
+ * @param hNum The number of commands executed
+ * @return The status of the execution
+  */
+int lemshell_history(vector<string> args, map<int, vector<string>> history, int hNum){
+    // Check if the history is empty
+    if (history.empty()) {
+        return print_error("No history available");
+    }
+
+    cout << apply_style("History", "green") << endl;
+
+    // Display the history
+    for (int i = hNum - 1; i >= 0; i--) {
+        cout << apply_style(to_string(i), "blue") << ": ";
+        for (string arg : history[i]) {
+            cout << arg << " ";
+        }
+        cout << endl;
+    }
+
     return 1;
 }
 
