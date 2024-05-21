@@ -28,6 +28,7 @@ vector<char> read_line();
 vector<string> split_line(vector<char> line);
 int execute(vector<string> args);
 int execute_command(vector<string> args);
+int print_error(string error);
 
 // Built-in Commands Prototypes
 int lemshell_cd(vector<string> args);
@@ -94,7 +95,8 @@ string get_directory() {
  * The style is applied using ANSI escape codes
  * 
  * Current Acceptable styles:
- * "normal"- Normal text
+ * "blue" - Blue text
+ * "red" - Red text
  * "yellow" - Yellow text
  * 
  * @param text The text to style
@@ -102,8 +104,10 @@ string get_directory() {
  * @return The styled text
  */
 string apply_style(string text, string style) {
-    if (style == "normal") {
-        return "\033[0m" + text + "\033[0m";
+    if (style == "blue") {
+        return "\033[34m" + text + "\033[0m";
+    } else if (style == "red") {
+        return "\033[31m" + text + "\033[0m";
     } else if (style == "yellow") {
         return "\033[33m" + text + "\033[0m";
     } else {
@@ -140,11 +144,8 @@ vector<string> split_line(vector<char> line) {
             arg += c;
         }
     }
-    args.push_back(arg);
-    
-    for(int i = 0; i < args.size(); i++){
-        cout << args[i] << endl;
-    }
+    // Before pushing the last argument, check if it is empty
+    if (!arg.empty()) args.push_back(arg);
 
     return args;
 }
@@ -193,14 +194,37 @@ int execute_command(vector<string> args){
 }
 
 /**
+ * Print an error message to cerr
+ * 
+ * @param error The error message to print
+ * @return The status of the execution
+ */
+int print_error(string error){
+    cerr << apply_style("Error: " + error, "red") << endl;
+    return 0;
+}
+
+/**
  * Built-in command to change the directory
+ * This command should have received two arguments:
+ * 0. The cd command itself
+ * 1. The directory to change to
+ * If the directory is not provided, the command will not execute
  * 
  * @param args The arguments to execute
  * @return The status of the execution
  */
 int lemshell_cd(vector<string> args){
-    // Todo - Implement the cd command
-    cout << "cd command" << endl;
+    // Check if the directory is provided
+    if (args.size() < 2) {
+        return print_error("No directory provided");
+    }
+
+    // Change the directory
+    if (chdir(args[1].c_str()) != 0) {
+        return print_error("Directory not found");
+    }
+
     return 1;
 }
 
@@ -233,6 +257,13 @@ int lemshell_exit(vector<string> args){
  * @return The status of the execution
  */
 int lemshell_help(vector<string> args){
-    cout << "I am very helpful :)" << endl;
+    lemshell_clear(args); // Clear the screen to make room for the help menu
+    cout << apply_style("LemShell", "yellow") << " - An OS-independent shell made by a Lemon" << endl;
+    cout << "This shell is written in C++ and is not yet finished." << endl;
+    cout << "The following built-in commands are available:" << endl;
+    cout << apply_style("cd", "blue") << " - Change the directory" << endl;
+    cout << apply_style("clear", "blue") << " - Clear the screen" << endl;
+    cout << apply_style("exit", "blue") << " - Exit the shell" << endl;
+    cout << apply_style("help", "blue") << " - Display this help menu" << endl;
     return 1;
 }
