@@ -3,6 +3,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include "bi_com.h"
+#include "styler.h"
 
 // Platform Specific Include Statements
 #ifdef _WIN32
@@ -28,14 +30,6 @@ vector<char> read_line();
 vector<string> split_line(vector<char> line);
 int execute(vector<string> args);
 int execute_command(vector<string> args);
-int print_error(string error);
-string get_os();
-
-// Built-in Commands Prototypes
-int lemshell_cd(vector<string> args);
-int lemshell_clear(vector<string> args);
-int lemshell_exit(vector<string> args);
-int lemshell_help(vector<string> args);
 
 /**
  * A simple shell program that can execute commands
@@ -45,7 +39,7 @@ int lemshell_help(vector<string> args);
  * It will be updated to work on Linux and other Unix-like operating systems in the future.
  * 
  * Compile with:
- * g++ lemshell.cpp -o lemshell
+ * g++ lemshell.cpp -o lemshell bi_com.cpp styler.cpp
  * 
  * @param argc The number of arguments
  * @param argv The arguments
@@ -88,31 +82,6 @@ string get_directory() {
         return cwd;
     } else {
         return "";
-    }
-}
-
-/**
- * Apply a style to the text
- * The style is applied using ANSI escape codes
- * 
- * Current Acceptable styles:
- * "blue" - Blue text
- * "red" - Red text
- * "yellow" - Yellow text
- * 
- * @param text The text to style
- * @param style The style to apply
- * @return The styled text
- */
-string apply_style(string text, string style) {
-    if (style == "blue") {
-        return "\033[34m" + text + "\033[0m";
-    } else if (style == "red") {
-        return "\033[31m" + text + "\033[0m";
-    } else if (style == "yellow") {
-        return "\033[33m" + text + "\033[0m";
-    } else {
-        return text; // Return the text as is
     }
 }
 
@@ -185,7 +154,7 @@ int execute_command(vector<string> args){
     } else if (args[0] == "clear") {
         return lemshell_clear(args);
     } else if (args[0] == "exit") {
-        return lemshell_exit(args);
+        return lemshell_exit(args, status);
     } else if (args[0] == "help") {
         return lemshell_help(args);
     }
@@ -198,94 +167,5 @@ int execute_command(vector<string> args){
     system(command.c_str());
 
     // Else execute the new process on this thread
-    return 1;
-}
-
-/**
- * Get the operating system of the user
- * 
- * @return The operating system of the user
-*/
-string get_os(){
-    #ifdef _WIN32
-        return "Windows";
-    #else
-        return "Unix";
-    #endif
-}
-
-/**
- * Print an error message to cerr
- * 
- * @param error The error message to print
- * @return The status of the execution
- */
-int print_error(string error){
-    cerr << apply_style("Error: " + error, "red") << endl;
-    return 0;
-}
-
-/**
- * Built-in command to change the directory
- * This command should have received two arguments:
- * 0. The cd command itself
- * 1. The directory to change to
- * If the directory is not provided, the command will not execute
- * 
- * @param args The arguments to execute
- * @return The status of the execution
- */
-int lemshell_cd(vector<string> args){
-    // Check if the directory is provided
-    if (args.size() < 2) {
-        return print_error("No directory provided");
-    }
-
-    // Change the directory
-    if (chdir(args[1].c_str()) != 0) {
-        return print_error("Directory not found");
-    }
-
-    return 1;
-}
-
-/**
- * Built-in command to clear the screen
- * 
- * @param args The arguments to execute
- * @return The status of the execution
- */
-int lemshell_clear(vector<string> args){
-    cout << "\033[2J\033[1;1H"; // Clear the screen
-    return 1;
-}
-
-/**
- * Built-in command to exit the shell
- * 
- * @param args The arguments to execute
- * @return The status of the execution
- */
-int lemshell_exit(vector<string> args){
-    status = 0;
-    return 1;
-}
-
-/**
- * Built-in command to display the help menu
- * 
- * @param args The arguments to execute
- * @return The status of the execution
- */
-int lemshell_help(vector<string> args){
-    lemshell_clear(args); // Clear the screen to make room for the help menu
-    cout << apply_style("LemShell", "yellow") << " - An OS-independent shell made by a Lemon" << endl;
-    cout << "This shell is written in C++ and is not yet finished." << endl;
-    cout << "The current operating system is: " << get_os() << endl;
-    cout << "The following built-in commands are available:" << endl;
-    cout << apply_style("cd", "blue") << " - Change the directory" << endl;
-    cout << apply_style("clear", "blue") << " - Clear the screen" << endl;
-    cout << apply_style("exit", "blue") << " - Exit the shell" << endl;
-    cout << apply_style("help", "blue") << " - Display this help menu" << endl;
     return 1;
 }
