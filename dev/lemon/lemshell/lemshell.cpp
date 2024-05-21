@@ -43,6 +43,8 @@ int execute_command(vector<string> args);
  * 
  * Compile with:
  * g++ lemshell.cpp -o lemshell bi_com.cpp styler.cpp
+ * Run with:
+ * ./lemshell
  * 
  * @param argc The number of arguments
  * @param argv The arguments
