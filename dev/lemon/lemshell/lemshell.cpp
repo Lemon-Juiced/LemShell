@@ -189,6 +189,13 @@ int execute_command(vector<string> args){
         return lemshell_help(args);
     }
 
+    // Otherwise, we can execute this as a system command by converting the vector back to a string
+    string command = "";
+    for (string arg : args) {
+        command += arg + " ";
+    }
+    system(command.c_str());
+
     // Else execute the new process on this thread
     return 1;
 }
