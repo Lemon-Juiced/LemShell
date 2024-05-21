@@ -29,6 +29,7 @@ vector<string> split_line(vector<char> line);
 int execute(vector<string> args);
 int execute_command(vector<string> args);
 int print_error(string error);
+string get_os();
 
 // Built-in Commands Prototypes
 int lemshell_cd(vector<string> args);
@@ -201,6 +202,19 @@ int execute_command(vector<string> args){
 }
 
 /**
+ * Get the operating system of the user
+ * 
+ * @return The operating system of the user
+*/
+string get_os(){
+    #ifdef _WIN32
+        return "Windows";
+    #else
+        return "Unix";
+    #endif
+}
+
+/**
  * Print an error message to cerr
  * 
  * @param error The error message to print
@@ -267,6 +281,7 @@ int lemshell_help(vector<string> args){
     lemshell_clear(args); // Clear the screen to make room for the help menu
     cout << apply_style("LemShell", "yellow") << " - An OS-independent shell made by a Lemon" << endl;
     cout << "This shell is written in C++ and is not yet finished." << endl;
+    cout << "The current operating system is: " << get_os() << endl;
     cout << "The following built-in commands are available:" << endl;
     cout << apply_style("cd", "blue") << " - Change the directory" << endl;
     cout << apply_style("clear", "blue") << " - Clear the screen" << endl;
