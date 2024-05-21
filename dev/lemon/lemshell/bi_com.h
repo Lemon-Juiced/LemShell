@@ -25,6 +25,7 @@ int lemshell_clear(vector<string> args);
 int lemshell_exit(vector<string> args, int &status);
 int lemshell_help(vector<string> args);
 int lemshell_history(vector<string> args, map<int, vector<string>> &history, int &hNum);
+int lemshell_history_clear(vector<string> args, map<int, vector<string>> &history, int &hNum);
 
 // Helper functions
 string get_os();

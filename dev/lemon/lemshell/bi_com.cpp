@@ -83,6 +83,8 @@ int lemshell_help(vector<string> args){
     cout << apply_style("clear", "blue") << " - Clear the screen" << endl;
     cout << apply_style("exit", "blue") << " - Exit the shell" << endl;
     cout << apply_style("help", "blue") << " - Display this help menu" << endl;
+    cout << apply_style("history", "blue") << " - Display the history of commands" << endl;
+    cout << apply_style("history -c(lear)", "blue") << " - Clear the history of commands" << endl;
     return 1;
 }
 
@@ -90,6 +92,8 @@ int lemshell_help(vector<string> args){
  * Built-in command to display the history of commands
  * Since all keys are integers, the history is ordered by the order of execution
  * We can just decrement the history number until we get to 0
+ * 
+ * The history command can also be used to clear the history by passing the -c (or -clear) flag
  * 
  * @param args The arguments to execute
  * @param history The history of commands
@@ -102,9 +106,13 @@ int lemshell_history(vector<string> args, map<int, vector<string>> &history, int
         return print_error("No history available");
     }
 
-    cout << apply_style("History", "green") << endl;
+    // Check if the clear flag is provided
+    if (args.size() > 1 && (args[1] == "-c" || args[1] == "-clear")) {
+        return lemshell_history_clear(args, history, hNum);
+    }
 
     // Display the history
+    cout << apply_style("History", "green") << endl;
     for (int i = hNum - 1; i >= 0; i--) {
         cout << apply_style(to_string(i), "blue") << ": ";
         for (string arg : history[i]) {
@@ -113,6 +121,20 @@ int lemshell_history(vector<string> args, map<int, vector<string>> &history, int
         cout << endl;
     }
 
+    return 1;
+}
+
+/**
+ * Built-in command to clear the history of commands (and reset the history number)
+ * 
+ * @param args The arguments to execute
+ * @param history The history of commands
+ * @param hNum The number of commands executed
+ * @return The status of the execution
+  */
+int lemshell_history_clear(vector<string> args, map<int, vector<string>> &history, int &hNum){
+    history.clear();
+    hNum = 0;
     return 1;
 }
 
