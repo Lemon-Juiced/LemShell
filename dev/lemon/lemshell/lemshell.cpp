@@ -9,13 +9,13 @@
 
 // Platform Specific Include Statements
 #ifdef _WIN32
-    #include <direct.h>
-    #include <windows.h>
-    #define GETCWD _getcwd
+    #include <direct.h> // Used for _getcwd in get_directory()
+    #include <windows.h> // Used for system in execute_command()
+    #define GETCWD _getcwd // Macro to get the current directory
 #else
-    #include <sys/wait.h>
-    #include <unistd.h>
-    #define GETCWD getcwd
+    #include <sys/wait.h> // Used for system in execute_command()
+    #include <unistd.h> // Used for getcwd in get_directory()
+    #define GETCWD getcwd // Macro to get the current directory
 #endif
 
 using namespace std;
