@@ -1,8 +1,16 @@
 #include <iostream>
 #include <string>
-#include <unistd.h> // This is for <code>getcwd</code> in <code>get_directory()</code>
 #include <vector>
 #include "command.h"
+
+#ifdef _WIN32
+    #include <direct.h>
+    #define GETCWD _getcwd
+#else
+    #include <unistd.h>
+    #define GETCWD getcwd
+#endif
+
 
 using namespace std;
 
@@ -62,8 +70,11 @@ void shell_loop() {
  */
 string get_directory() {
     char cwd[1024]; // Buffer to store the current directory
-    getcwd(cwd, sizeof(cwd));
-    return cwd;
+    if (GETCWD(cwd, sizeof(cwd)) != NULL) {
+        return cwd;
+    } else {
+        return "";
+    }
 }
 
 /**
