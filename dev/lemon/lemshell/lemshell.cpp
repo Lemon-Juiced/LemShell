@@ -7,8 +7,10 @@
 // Platform Specific Include Statements
 #ifdef _WIN32
     #include <direct.h>
+    #include <windows.h>
     #define GETCWD _getcwd
 #else
+    #include <sys/wait.h>
     #include <unistd.h>
     #define GETCWD getcwd
 #endif
@@ -30,6 +32,9 @@ int execute(vector<string> args);
 /**
  * A simple shell program that can execute commands
  * The main function of the program will run the shell's loop
+ * 
+ * This version is currently meant to work specifically on Windows.
+ * It will be updated to work on Linux and other Unix-like operating systems in the future.
  * 
  * Compile with:
  * g++ lemshell.cpp -o lemshell command.cpp
@@ -136,23 +141,35 @@ vector<string> split_line(vector<char> line) {
 }
 
 /**
- * Execute the arguments
- * 
- * To do: make function work
+ * Execute the arguments by creating a new process for each command.
  * 
  * @param args The arguments to execute
  * @return The status of the execution
  */
 int execute(vector<string> args) {
-    // Check if the command is a built-in command
-    if (args[0] == "exit") {
-        status = false; // This sets the status to false, which will exit the shell
-        return 0;
-    } else if (args[0] == "clear") {
-        commandCaller.clear();
+    // This does not work on Windows
+    /*
+    pid_t pid, wait_pid;
+    int status;
+
+    pid = fork();
+    if (pid == 0) {
+        // Child Process
+        if (execvp(args[0].c_str(), (char *const *)&args[0]) == -1) {
+            string error = "Error: Command not found";
+            cerr << apply_style(error, "red") << endl;
+        }
+    } else if (pid < 0) {
+        // Error Forking
+        string error = "Error: Forking failed";
+        cerr << apply_style(error, "red") << endl;
     } else {
-        cout << "Command not found: " << args[0] << endl;
+        // Parent Process
+        do {
+            wait_pid = waitpid(pid, &status, WUNTRACED);
+        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
 
     return 1;
+    */
 }
