@@ -41,10 +41,8 @@ int execute_command(vector<string> args);
  * This version is currently meant to work specifically on Windows.
  * It will be updated to work on Linux and other Unix-like operating systems in the future.
  * 
- * Compile with:
- * g++ lemshell.cpp -o lemshell bi_com.cpp styler.cpp
- * Run with:
- * ./lemshell
+ * This can be compiled using the following command: make
+ * This can be run with the following command: ./lemshell (Unix) or .\lemshell.exe (Windows)
  * 
  * @param argc The number of arguments
  * @param argv The arguments
