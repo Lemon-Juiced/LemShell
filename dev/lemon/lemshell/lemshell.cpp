@@ -1,8 +1,10 @@
+// General Include Statements
 #include <iostream>
 #include <string>
 #include <vector>
 #include "command.h"
 
+// Platform Specific Include Statements
 #ifdef _WIN32
     #include <direct.h>
     #define GETCWD _getcwd
@@ -10,7 +12,6 @@
     #include <unistd.h>
     #define GETCWD getcwd
 #endif
-
 
 using namespace std;
 
