@@ -91,6 +91,9 @@ string get_directory() {
 
 /**
  * Read a line from the user
+ * The user also has additional input options here, for example:
+ * The user can use the up and down arrow keys to scroll through the history.
+ * The user can press the tab key to autocomplete commands.
  * 
  * @return The line read from the user
  */
