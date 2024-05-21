@@ -8,6 +8,8 @@ using namespace std;
 string apply_style(string text, string style) {
     if (style == "blue") {
         return "\033[34m" + text + "\033[0m";
+    } else if (style == "green") {
+        return "\033[32m" + text + "\033[0m";
     } else if (style == "red") {
         return "\033[31m" + text + "\033[0m";
     } else if (style == "yellow") {

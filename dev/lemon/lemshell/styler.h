@@ -12,6 +12,7 @@ using namespace std;
  * 
  * Current Acceptable styles:
  * "blue" - Blue text
+ * "green" - Green text
  * "red" - Red text
  * "yellow" - Yellow text
  * 
