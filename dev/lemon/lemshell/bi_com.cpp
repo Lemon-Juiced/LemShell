@@ -96,7 +96,7 @@ int lemshell_help(vector<string> args){
  * @param hNum The number of commands executed
  * @return The status of the execution
   */
-int lemshell_history(vector<string> args, map<int, vector<string>> history, int hNum){
+int lemshell_history(vector<string> args, map<int, vector<string>> &history, int &hNum){
     // Check if the history is empty
     if (history.empty()) {
         return print_error("No history available");
