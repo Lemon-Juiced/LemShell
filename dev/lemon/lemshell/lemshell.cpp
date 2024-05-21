@@ -1,8 +1,8 @@
 // General Include Statements
 #include <iostream>
 #include <string>
+#include <thread>
 #include <vector>
-#include "command.h"
 
 // Platform Specific Include Statements
 #ifdef _WIN32
@@ -18,7 +18,6 @@
 using namespace std;
 
 // Global Constants
-Command commandCaller;
 int status = true;
 
 // Function Prototypes
@@ -28,6 +27,13 @@ string apply_style(string text, string style);
 vector<char> read_line();
 vector<string> split_line(vector<char> line);
 int execute(vector<string> args);
+int execute_command(vector<string> args);
+
+// Built-in Commands Prototypes
+int lemshell_cd(vector<string> args);
+int lemshell_clear(vector<string> args);
+int lemshell_exit(vector<string> args);
+int lemshell_help(vector<string> args);
 
 /**
  * A simple shell program that can execute commands
@@ -37,7 +43,7 @@ int execute(vector<string> args);
  * It will be updated to work on Linux and other Unix-like operating systems in the future.
  * 
  * Compile with:
- * g++ lemshell.cpp -o lemshell command.cpp
+ * g++ lemshell.cpp -o lemshell
  * 
  * @param argc The number of arguments
  * @param argv The arguments
@@ -118,25 +124,28 @@ vector<char> read_line() {
 }
 
 /**
- * Split the line into arguments
+ * Split the line into strings of commands
  * 
  * @param line The line to split
- * @return The arguments
+ * @return The vector of strings of commands
  */
 vector<string> split_line(vector<char> line) {
     vector<string> args;
     string arg = "";
-    for (int i = 0; i < line.size(); i++) {
-        if (line[i] == ' ') {
+    for (char c : line) {
+        if (c == ' ') {
             args.push_back(arg);
             arg = "";
         } else {
-            arg += line[i];
+            arg += c;
         }
     }
-    if (!arg.empty()) {
-        args.push_back(arg);
+    args.push_back(arg);
+    
+    for(int i = 0; i < args.size(); i++){
+        cout << args[i] << endl;
     }
+
     return args;
 }
 
@@ -144,32 +153,86 @@ vector<string> split_line(vector<char> line) {
  * Execute the arguments by creating a new process for each command.
  * 
  * @param args The arguments to execute
- * @return The status of the execution
+ * @return The status of the execution (1 for success, 0 for failure)
  */
 int execute(vector<string> args) {
-    // This does not work on Windows
-    /*
-    pid_t pid, wait_pid;
-    int status;
-
-    pid = fork();
-    if (pid == 0) {
-        // Child Process
-        if (execvp(args[0].c_str(), (char *const *)&args[0]) == -1) {
-            string error = "Error: Command not found";
-            cerr << apply_style(error, "red") << endl;
-        }
-    } else if (pid < 0) {
-        // Error Forking
-        string error = "Error: Forking failed";
-        cerr << apply_style(error, "red") << endl;
-    } else {
-        // Parent Process
-        do {
-            wait_pid = waitpid(pid, &status, WUNTRACED);
-        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    // Check if the command is empty
+    if (args.empty()) {
+        return 1;
     }
 
+    // Create a thread to execute the command
+    thread p_thread(execute_command, args);
+
+    // Wait for the process to finish
+    p_thread.join();
+
+    return status;
+}
+
+/**
+ * Execute the command on its own thread
+ * 
+ * @param args The arguments to execute
+ * @return The status of the execution
+ */
+int execute_command(vector<string> args){
+    // Check if the command is a built-in command
+    if (args[0] == "cd") {
+        return lemshell_cd(args);
+    } else if (args[0] == "clear") {
+        return lemshell_clear(args);
+    } else if (args[0] == "exit") {
+        return lemshell_exit(args);
+    } else if (args[0] == "help") {
+        return lemshell_help(args);
+    }
+
+    // Else execute the new process on this thread
     return 1;
-    */
+}
+
+/**
+ * Built-in command to change the directory
+ * 
+ * @param args The arguments to execute
+ * @return The status of the execution
+ */
+int lemshell_cd(vector<string> args){
+    // Todo - Implement the cd command
+    cout << "cd command" << endl;
+    return 1;
+}
+
+/**
+ * Built-in command to clear the screen
+ * 
+ * @param args The arguments to execute
+ * @return The status of the execution
+ */
+int lemshell_clear(vector<string> args){
+    cout << "\033[2J\033[1;1H"; // Clear the screen
+    return 1;
+}
+
+/**
+ * Built-in command to exit the shell
+ * 
+ * @param args The arguments to execute
+ * @return The status of the execution
+ */
+int lemshell_exit(vector<string> args){
+    status = 0;
+    return 1;
+}
+
+/**
+ * Built-in command to display the help menu
+ * 
+ * @param args The arguments to execute
+ * @return The status of the execution
+ */
+int lemshell_help(vector<string> args){
+    cout << "I am very helpful :)" << endl;
+    return 1;
 }
